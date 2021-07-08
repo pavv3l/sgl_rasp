@@ -1,1 +1,0 @@
-/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/home/nte/crosscompile/sysroot-glibc-linaro-2.25-2019.12-arm-linux-gnueabihf -g -rdynamic CMakeFiles/pigpiod.dir/pigpiod.c.o -o pigpiod  -Wl,-rpath,/home/nte/CLionProjects/SGL/cmake-build-debug/libs/pigpio: libpigpio.so -lrt -lpthread 

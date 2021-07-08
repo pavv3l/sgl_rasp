@@ -1,3 +1,0 @@
-file(REMOVE_RECURSE
-  "libSGL_LIB_ILI9341.a"
-)

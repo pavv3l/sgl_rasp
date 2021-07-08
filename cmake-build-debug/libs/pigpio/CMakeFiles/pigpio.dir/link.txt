@@ -1,1 +1,0 @@
-/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/home/nte/crosscompile/sysroot-glibc-linaro-2.25-2019.12-arm-linux-gnueabihf -fPIC -g -shared -Wl,-soname,libpigpio.so -o libpigpio.so CMakeFiles/pigpio.dir/pigpio.c.o CMakeFiles/pigpio.dir/command.c.o 

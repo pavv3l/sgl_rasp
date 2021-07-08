@@ -1,2 +1,0 @@
-/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ar qc libPIGPIO.a CMakeFiles/PIGPIO.dir/pigpio.c.o CMakeFiles/PIGPIO.dir/command.c.o
-/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ranlib libPIGPIO.a
