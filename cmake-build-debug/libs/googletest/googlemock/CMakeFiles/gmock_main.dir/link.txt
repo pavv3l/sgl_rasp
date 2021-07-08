@@ -1,0 +1,2 @@
+/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ar qc ../../../lib/libgmock_maind.a CMakeFiles/gmock_main.dir/src/gmock_main.cc.o
+/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ranlib ../../../lib/libgmock_maind.a

@@ -1,0 +1,2 @@
+/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ar qc libSGL_LIB_PCD8544.a CMakeFiles/SGL_LIB_PCD8544.dir/src/sgl_pcd8544.cpp.o
+/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ranlib libSGL_LIB_PCD8544.a

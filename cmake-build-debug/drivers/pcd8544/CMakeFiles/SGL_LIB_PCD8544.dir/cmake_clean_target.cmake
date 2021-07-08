@@ -1,0 +1,3 @@
+file(REMOVE_RECURSE
+  "libSGL_LIB_PCD8544.a"
+)

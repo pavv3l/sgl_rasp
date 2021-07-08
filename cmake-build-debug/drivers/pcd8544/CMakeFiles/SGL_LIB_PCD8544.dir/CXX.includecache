@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../drivers/pcd8544/include/sgl_pcd8544.h
+sgl.h
+-
+
+../sgl/fonts/include/font.h
+cstdint
+-
+
+../sgl/include/sgl.h
+cstdint
+-
+memory
+-
+font.h
+-
+
+/home/nte/CLionProjects/SGL/drivers/pcd8544/src/sgl_pcd8544.cpp
+sgl_pcd8544.h
+/home/nte/CLionProjects/SGL/drivers/pcd8544/src/sgl_pcd8544.h
+

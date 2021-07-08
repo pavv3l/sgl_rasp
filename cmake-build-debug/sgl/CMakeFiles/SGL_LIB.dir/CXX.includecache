@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../sgl/fonts/include/font.h
+cstdint
+-
+
+../sgl/include/sgl.h
+cstdint
+-
+memory
+-
+font.h
+-
+
+/home/nte/CLionProjects/SGL/sgl/src/sgl.cpp
+sgl.h
+-
+

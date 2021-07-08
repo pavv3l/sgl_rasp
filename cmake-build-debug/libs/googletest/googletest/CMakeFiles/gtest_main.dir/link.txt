@@ -1,0 +1,2 @@
+/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ar qc ../../../lib/libgtest_maind.a CMakeFiles/gtest_main.dir/src/gtest_main.cc.o
+/home/nte/crosscompile/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ranlib ../../../lib/libgtest_maind.a
