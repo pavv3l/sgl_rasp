@@ -38,71 +38,49 @@ SGLILI9341::SGLILI9341(PinName CE, PinName DC, PinName RST, PinName SPI_MOSI, Pi
 
 SGLILI9341::~SGLILI9341()
 {
-    //delete[] txbuff;
-    //delete[] commandBuffer;
     spiClose(spiHandle);
     gpioTerminate();
 }
 
 void SGLILI9341::init()
 {
-    txbuffLen = 240 * 320 * 2;
-    txbuff.resize(txbuffLen);
-    //commandBuffer = new char[100];
-    commandBuffer.resize(100);
-    reset();
-    //higherByte = (unsigned char)((command & 0xff00) >> 8);
-    //lowerByte = (unsigned char)(command & 0x00ff);
-    //SPI_transmit(higherByte);
-    //SPI_transmit(lowerByte);
-
-    // comm(16bit)
-    //AVR_WRITESPI(w >> 8);
-    //AVR_WRITESPI(w);
+    reset2();
 }
 
 void SGLILI9341::sendCommand(uint8_t cmd)
 {
-    //spi.format(8,3);
     gpioWrite(ce, PI_OFF);
     gpioWrite(dc, PI_OFF);
     commandBuffer[0] = cmd;
     spiWrite(spiHandle, commandBuffer.data(), 1);
-    //spi.write(cmd);
     gpioWrite(dc, PI_ON);
-    //spi.format(16,3);
 }
 
 void SGLILI9341::sendCommandParameter(uint8_t cmd)
 {
-    //spi.format(8,3);
     gpioWrite(ce, PI_OFF);
     gpioWrite(dc, PI_ON);
     commandBuffer[0] = cmd;
     spiWrite(spiHandle, commandBuffer.data(), 1);
-    //spi.write(cmd);
-    //spi.format(16,3);
 }
 
-void SGLILI9341::sendCommandWithParameter(std::initializer_list<uint8_t> lst)
-{/*
+void SGLILI9341::sendCommandWithParameter(std::initializer_list<char> lst)
+{
     uint8_t size = lst.size();
-    if(size < 2) return;
-    //spi.format(8,3);
+    if(size < 2 || size > 255) return;
     gpioWrite(ce, PI_OFF);
     gpioWrite(dc, PI_OFF);
-    // std::pair<std::initializer_list<uint8_t>::iterator, uint16_t> cdat = std::make_pair(lst.begin(), 0);
-    auto cdat = std::make_pair(lst.begin(), 0);
-    for(; cdat.first < lst.end(); ++cdat.second)
-    {
-        commandBuffer[cdat.second] = *cdat.first;
-        //spi.write(*i);
-    }
-    spiWrite(spiHandle, commandBuffer, 1);
+    commandBuffer[0] = *lst.begin();
+    spiWrite(spiHandle, commandBuffer.data(), 1);
+
     gpioWrite(dc, PI_ON);
-    spiWrite(spiHandle, (commandBuffer + 1), cdat.second);
+    auto i = lst.begin() + 1;
+    for(int j = 0; i < lst.end(); ++i, ++j)
+    {
+        txbuff[j] = *i;
+    }
+    spiWrite(spiHandle, txbuff.data(), lst.size() - 1);
     gpioWrite(ce, PI_ON);
-    */
 }
 
 void SGLILI9341::sendData(uint16_t data)
@@ -148,34 +126,19 @@ unsigned char reverse(unsigned char b) {
 }
 
 void SGLILI9341::fillScreen(uint16_t color) {
-    for (int i = 0; i < txbuff.size(); i = i + 2) {
+    for (int i = 0; i < txbuff.size()-2; i = i + 2) {
         txbuff[i] = HIGHERBYTE(color);
         txbuff[i + 1] = LOWERBYTE(color);
     }
-    setActiveWindow(0, 0, 240, 320);
+    setActiveWindow(0, 0, 240 - 1, 320 - 1);
     {
         gpioWrite(ce, PI_OFF);
         gpioWrite(dc, PI_ON);
-        //spiXfer(spiHandle, txbuff.data(), NULL, txbuff.size());
-        spiWrite(spiHandle, txbuff.data(), txbuff.size());
+        // z jakiegos powodu w tablicy jest zla dana na poczatku(tak jakby z setActiveWindow)
+        spiXfer(spiHandle, txbuff.data(), NULL, txbuff.size());
+        //spiWrite(spiHandle, txbuff.data(), txbuff.size());
         gpioWrite(ce, PI_ON);
     }
-}
-
-void SGLILI9341::drawBitmap(uint16_t* bitmap, uint16_t x, uint16_t y, uint16_t width, uint16_t height)
-{
-    if(x >= _width)
-        x = _width - 1;
-    if(y >= _height)
-        y = _height - 1;
-    if((x + width) >= _width)
-        width = _width - x - 1;
-    if((y + _height) >= _height)
-        _height = _height - y - 1;
-
-    //spi.write16(bitmap, width*height);
-    // OR better
-    //spi.write((char*)bitmap, sizeof(*bitmap)* width * height, NULL, NULL);
 }
 
 void SGLILI9341::reset()
@@ -405,11 +368,18 @@ void SGLILI9341::invert_display(bool invert)
 void SGLILI9341::scroll_to(uint16_t h)
 {
     sendCommand(ILI9341_VSCRSADD);
-    sendData(h >> 8);
-    sendData(h & 255);
+    sendData(h);
 }
 
 void SGLILI9341::set_scroll_margins(uint16_t top, uint16_t bottom)
 {
     ;
 }
+
+void SGLILI9341::clearBuffer()
+{
+    std::fill(txbuff.begin(), txbuff.end(), ILI9341_WHITE);
+    std::fill(commandBuffer.begin(), commandBuffer.end(), ILI9341_WHITE);
+}
+
+void SGLILI9341::drawrScreen()

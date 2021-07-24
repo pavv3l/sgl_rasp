@@ -13,10 +13,11 @@ a danymi pojawia się zwłoka realizowana na  pinie CS w postaci stanu wysokiego
 #include <pigpio.h>
 #include <cstdint>
 #include <initializer_list>
-#include <vector>
+#include <array>
+#include <algorithm>
 #include <unistd.h>
 
-#define SPI_BAUD 5000000
+#define SPI_BAUD 5'000'000
 //21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
 //b  b  b  b  b  b  R  T  n  n  n  n   W  A u2 u1 u0 p2 p1 p0  m  m
 #define SPI_CHAN 0
@@ -113,20 +114,22 @@ class SGLILI9341: public SGL
     SGLILI9341(PinName CE, PinName DC, PinName RST, PinName SPI_MOSI, PinName SPI_MISO, PinName SPI_SCK);
     ~SGLILI9341();
     void init();
-    void sendCommand(uint8_t cmd);
-    void sendCommandParameter(uint8_t cmd);
-    void sendCommandWithParameter(std::initializer_list<uint8_t> lst);
-    void sendData(uint16_t data);
-    void setActiveWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
-    void drawPixel(uint16_t x, uint16_t y, uint16_t color, SGL::Mode mode) override;
+    void drawPixel(uint16_t x, uint16_t y, uint16_t color = ILI9341_WHITE, SGL::Mode mode = SGL::Mode::px_copy) override;
     void fillScreen(uint16_t color);
-    void drawBitmap(uint16_t* bitmap, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
     void set_rotation(uint8_t rot);
     void invert_display(bool invert);
     void scroll_to(uint16_t h);
     void set_scroll_margins(uint16_t top, uint16_t bottom);
-protected:
     void reset();
+protected:
+    void sendCommand(uint8_t cmd);
+    void sendCommandParameter(uint8_t cmd);
+    void sendCommandWithParameter(std::initializer_list<char> lst);
+    void sendData(uint16_t data);
+    void setActiveWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+    struct DataChahne
+    void clearBuffer();
+    void drawrScreen();
     void reset2();
 
     bool wrapText = true;
@@ -139,14 +142,12 @@ protected:
     PinName spiCLK;
     MySPI spiHandle;
 
-    //char* txbuff;
-    std::vector<char> txbuff;
-    int txbuffLen;
-    //char* commandBuffer;
-    std::vector<char> commandBuffer;
+    std::array<char, LCD_WIDTH * LCD_HEIGHT * 2> txbuff;
+    std::array<char,100> commandBuffer;
 
     uint8_t contrast;
     uint8_t bias;
+    struct RangeSrcreen
 };
 
 

@@ -7,7 +7,7 @@ SGL::SGL(uint16_t width, uint16_t height): _width(width), _height(height) {}
 SGL::~SGL() {}
 void SGL::drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color, Mode mode)
 {
-    // sprawdz czy jest w zasiegu
+    // check if are in range
     if (x0 >= _width)
         x0 = _width - 1;
     if (x1 >= _width)
@@ -25,10 +25,15 @@ void SGL::drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t 
     if(dx == 0)
         drawVerticalLine(x0, y0, (x1 - x0) ,color, mode);
     // signs of x and y axes
+    //if(dx < 0)
+    //    SWAP_INT16(x0, x1);
+    //if(dy < 0)
+    //    SWAP_INT16(y0, y1);
     int8_t x_mult = (x0 > x1) ? -1 : 1;
-    int8_t y_mult = (y0 < y1) ? -1 : 1;
+    int8_t y_mult = (y0 > y1) ? -1 : 1;
     if(dy < dx)
     { // positive slope
+        std::cout << "Positive slope\n";
         int16_t d = (2 * dy) - dx;
         uint16_t y = 0;
         for(uint16_t x = 0; x <= dx; ++x)
@@ -44,6 +49,7 @@ void SGL::drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t 
     }
     else
     { // negative slope
+        std::cout << "Negative slope\n";
         int16_t d = (2 * dx) - dy;
         uint16_t x = 0;
         for(uint16_t y = 0; y <= dy; ++y)
@@ -121,34 +127,37 @@ void SGL::drawRectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint
     int16_t dx = x1 - x0;
     int16_t dy = y1 - y0;
     if(dx ==0 && dy == 0)
+    {
         drawPixel(x0, y0, color, mode);
+        return;
+    }
     if(dx < 0)
         SWAP_INT16(x0, x1);
     if(dy < 0)
         SWAP_INT16(y0, y1);
     if(dx == 0)
-        drawVerticalLine(x0, y0, (y1-y0));
+        drawVerticalLine(x0, y0, (y1-y0 + 1));
     if(dy == 0)
-        drawHorizontalLine(x0, y0, (x1 - x0), color, mode);
+        drawHorizontalLine(x0, y0, (x1 - x0 + 1), color, mode);
     if(fill == Fill::solid)
     {
         if(abs(dx) > abs(dy))
         {
             for(int i = y0; i <= y1; ++i)
-                drawHorizontalLine(x0, i, (x1 - x0), color, mode);
+                drawHorizontalLine(x0, i, (x1 - x0 + 1), color, mode);
         }
         else
         {
             for(int i = x0; i <= x1; ++i)
-                drawVerticalLine(i, y0, (y1 - y0), color, mode);
+                drawVerticalLine(i, y0, (y1 - y0 + 1), color, mode);
         }
     }
     else
     {
-        drawHorizontalLine(x0, y0, (x1 - x0), color, mode);
-        drawHorizontalLine(x0, y1, (x1 - x0), color, mode);
-        drawVerticalLine(x0, y0, (y1 - y0), color, mode);
-        drawVerticalLine(x0, y1, (y1 - y0), color, mode);
+        drawHorizontalLine(x0, y0, (x1 - x0 + 1), color, mode);
+        drawHorizontalLine(x0, y1, (x1 - x0 + 1), color, mode);
+        drawVerticalLine(x0, y0, (y1 - y0), color, mode); // add 1 is not necessary
+        drawVerticalLine(x1, y0, (y1 - y0), color, mode); // add 1 is not necessary
     }
 }
 void SGL::drawTriangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
@@ -227,7 +236,7 @@ void SGL::drawPixelCheckArg(uint16_t x0, uint16_t y0, uint16_t color, Mode mode)
     if(x0 >= _width)
         x0 = _width - 1;
     if(y0 >= _height)
-        y0 >= _height - 1;
+        y0 = _height - 1;
     drawPixel(x0, y0, color, mode);
 }
 
@@ -271,16 +280,14 @@ void SGL::drawChar(char c, uint16_t x, uint16_t y) // for the new font
 
 void SGL::drawString(const char* c, uint16_t x, uint16_t y)
 {
-    uint8_t xx = x;
-    uint8_t yy = y;
-    for(; *c != '\0'; c++) {
+    uint lenstr = strlen(c);
+    for(int i = 0; i < lenstr ; c++, ++i) {
         if(x > _width - _font->get_char_width(*c-32) && _font->wrap == false)
         {
             return;
         }
         if(x > _width - _font->get_char_width(*c-32))
         {
-            x = xx;
             y += _font->font_height;
         }
         if(*c > 126)
@@ -313,4 +320,12 @@ void SGL::drawBitmap16(uint16_t* bitmap, uint16_t x, uint16_t y, uint16_t width,
             drawPixel(i + x, j + x, *(bitmap + i + j * width));
         }
     }
+}
+
+unsigned char SGL::reverseBytes(unsigned char b)
+{
+    b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
+    b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
+    b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
+    return b;
 }

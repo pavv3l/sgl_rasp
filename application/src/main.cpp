@@ -9,9 +9,19 @@ int main(int argc, char** argv) {
     SGLILI9341 lcd(8, 23, 24, 10, 9, 11);
     lcd.init();
     auto t1 = std::chrono::high_resolution_clock::now();
-    lcd.fillScreen(0xF800);
-    for(auto i = std::make_pair<int,int>(0,240); i.first < 320; ++i.first)
-        lcd.drawLine(0,i.first,240,i.first);
+    lcd.fillScreen(RGB565(255,0 ,0));
+    usleep(5000000);
+    lcd.fillScreen(RGB565(0,255 ,0));
+    usleep(5000000);
+    lcd.fillScreen(RGB565(0,0 ,255));
+    //lcd.fillScreen(RGB565(255,255,255));
+    //lcd.fillScreen(RGB565(0,150,0));
+    //lcd.drawPixel(1,1, ILI9341_GREEN, SGL::Mode::px_copy);
+    //lcd.drawRectangle(10,10, 100, 100, ILI9341_RED);
+    //lcd.drawCircle(150, 150, 40, ILI9341_RED);
+    //lcd.drawLine(200, 200, 100, 100, ILI9341_RED);
+    //lcd.drawLine(2, 2, 99, 99, ILI9341_GREEN);
+
     auto t2 = std::chrono::high_resolution_clock::now();
     std::cout << "Pomiar czasu 1000* send fillscreen: " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 -t1).count() << std::endl;
     return 0;

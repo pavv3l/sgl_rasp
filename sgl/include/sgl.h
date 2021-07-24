@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <memory>
 #include <font.h>
+#include <cstring>
+#include <iostream>
 
 //  Funkcja konwertujaca kolor rgb 24(RGB888) BIT do 16(RGB565) bitowego hex
 #define RGB565(r,g,b) ((((uint16_t)r & 0x00F8) << 8) | (((uint16_t)g & 0x00FC) << 3) | (((uint16_t)b & 0x00F8) >> 3))
@@ -27,6 +29,16 @@
     b = temp;           \
 }
 
+// function for async work
+#include <future>
+template<class T, class... Ts>
+        inline
+        auto
+        doReallyAsyncWork(T&& t, Ts... params)
+{
+            return std::async(std::launch::async, std::forward<T>(t), std::forward<Ts>(params)...);
+}
+
 class SGL {
 public:
     enum class Mode: uint8_t
@@ -45,7 +57,7 @@ public:
     // draw to display in other case you must use drawScreen
     SGL(uint16_t width, uint16_t height);
     virtual ~SGL();
-    virtual void drawPixel(uint16_t x0, uint16_t y0, uint16_t color = BLACK, Mode mode = Mode::px_copy) = 0;
+    virtual void drawPixel(uint16_t x0, uint16_t y0, uint16_t color = WHITE, Mode mode = Mode::px_copy) = 0;
     // wazne, dla linii dlugosc 0 oznacza brak linii
     virtual void drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color = BLACK, Mode mode = Mode::px_copy);
     virtual void drawRectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color = BLACK, Fill fill = Fill::hole, Mode mode = Mode::px_copy);
@@ -57,6 +69,8 @@ public:
     void drawString(const char* c, uint16_t x, uint16_t y);
     void drawBitmap16(uint16_t* bitmap, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 protected:
+    // reverse byte order e.g 101011 - return from func 110101
+    unsigned char reverseBytes(unsigned char b);
     // draw horizontal and vertical lines are procected, and don't need to check their arguments
     void drawHorizontalLine(uint16_t x, uint16_t y, int16_t len, uint16_t color = BLACK, Mode mode = Mode::px_copy);
     void drawVerticalLine(uint16_t x, uint16_t y, int16_t len, uint16_t color = BLACK, Mode mode = Mode::px_copy);

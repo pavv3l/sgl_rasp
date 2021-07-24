@@ -7,9 +7,9 @@ add_compile_options(-Wall -Wno-comment)
 
 add_subdirectory(sgl)
 add_subdirectory(drivers)
-add_subdirectory(libs EXCLUDE_FROM_ALL)
+add_subdirectory(libs)
 add_subdirectory(application)
-add_subdirectory(ut EXCLUDE_FROM_ALL)
+add_subdirectory(ut)
 
 add_custom_target(CreateInstaller
         COMMAND ${CMAKE_COMMAND} --build . --target install
